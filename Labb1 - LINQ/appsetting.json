@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=LAPTOP-QOF7697S;Database=Labb1_LINQ;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;"
+  }
+}
