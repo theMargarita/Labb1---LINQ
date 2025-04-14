@@ -21,11 +21,13 @@ namespace Labb1___LINQ
         }
 
         //Lista alla leverantörer (suppliers) som har produkter med ett lagersaldo under 10 enheter
+        //fel på metoden 
         public static void GetSuppliers()
         {
             using (var context = new E_CommerceContext())
             {
-                var suppliers = context.Products.Include(p => p.Supplier).Where(p => p.StockQuantity < 10);
+                var suppliers = context.Products
+                    .Where(p => p.StockQuantity < 10);
 
 
                 foreach (var s in suppliers)
@@ -40,26 +42,16 @@ namespace Labb1___LINQ
         {
             using (var context = new E_CommerceContext())
             {
+                //to clarify one month back
+                var oneMonthAgo = DateTime.Today.AddMonths(-1);
+                //to clarify todays date
+                var today = DateTime.Today;
 
                 var totalPriceOfORders = context.Orders
-                    .Where(o => o.OrderDate == DateTime.Today.AddDays(-31))
+                    .Where(o => o.OrderDate >= oneMonthAgo && o.OrderDate <= today)
                     .Sum(o => o.TotalAmount);
 
-                Console.WriteLine($"Total past months order {totalPriceOfORders}");
-
-
-                var totalAmount = context.Orders
-                    .Where(o => o.OrderDate == DateTime.Today.AddDays(-31))
-                    .Select(o => new
-                    {
-                        Date = o.OrderDate,
-                        Total = o.TotalAmount
-                    }).ToList();
-
-                foreach (var t in totalAmount)
-                {
-                    Console.WriteLine($"Something: {t.Date} {t.Total}");
-                }
+                Console.WriteLine($"Total cost of the past month order: {totalPriceOfORders.ToString()} kr");
             }
         }
 
@@ -89,17 +81,17 @@ namespace Labb1___LINQ
             using (var context = new E_CommerceContext())
             {
                 var getCategoryAndProduct = context.Categorys
-                    //.Include(p => p.Products)
-                    .Select(p => new
+                    .Select(c => new
                     {
-                        Category = p.Name,
-                        Count = p.Products.Count()
-                    }).ToList();
+                        Category = c.Name,
+                        Product = c.Products.Count()
+                    })
+                    .ToList();
 
 
-                foreach (var p in getCategoryAndProduct)
+                foreach (var items in getCategoryAndProduct)
                 {
-                    Console.WriteLine($"{p.Category} - {p.Count}");
+                    Console.WriteLine($"Categories: {items.Category} - Number of Products: {items.Product} ");
                 }
 
             }
@@ -110,7 +102,23 @@ namespace Labb1___LINQ
         {
             using (var context = new E_CommerceContext())
             {
+                var getCustomerInfo = context.Orders
+                    .Where(o => o.TotalAmount > 100)
+                    .Include(c => c.Customer)
+                    .Include(od => od.OrderDetails)
+                    .ThenInclude(p => p.Product)
+                    .ToList();
 
+
+                foreach (var items in getCustomerInfo)
+                {
+                    Console.WriteLine($"Order: {items.OrderId}: Customer: {items.Customer.Name} - Total: {items.TotalAmount} kr");
+                    foreach (var d in items.OrderDetails)
+                    {
+                        Console.WriteLine($"Product name: {d.Product.Name}- Quantity: {d.Product.StockQuantity} - Unit price: {d.UnitPrice:C}");
+                        Console.WriteLine();
+                    }
+                }
             }
         }
 
