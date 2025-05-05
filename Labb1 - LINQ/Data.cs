@@ -9,6 +9,7 @@ namespace Labb1___LINQ
         //Hämta alla produkter i kategorin "Electronics" och sortera dem efter pris (högst först)
         public static void GetElectronices()
         {
+            Console.WriteLine();
             using (var context = new E_CommerceContext())
             {
                 var electronics = context.Products.Where(p => p.CategoryId == 1).OrderByDescending(p => p.Price);
@@ -17,23 +18,30 @@ namespace Labb1___LINQ
                 {
                     Console.WriteLine($"Name of the product: {e.Name}  \nPrice: {e.Price:C}\n");
                 }
+
+                Console.WriteLine();
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 
         //Lista alla leverantörer (suppliers) som har produkter med ett lagersaldo under 10 enheter
-        //fel på metoden 
         public static void GetSuppliers()
         {
             using (var context = new E_CommerceContext())
             {
                 var suppliers = context.Products
-                    .Where(p => p.StockQuantity < 10);
-
+                    .Where(p => p.StockQuantity < 10)
+                    .Select(p => p.Supplier).Distinct().ToList();
 
                 foreach (var s in suppliers)
                 {
-                    Console.WriteLine($"Name: {s.Supplier.Name} - Product name: {s.Name} -  Stock quantity: {s.StockQuantity}");
+                    Console.WriteLine($"Name: {s.Name}");
                 }
+
+                Console.WriteLine();
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 
@@ -53,23 +61,40 @@ namespace Labb1___LINQ
 
                 Console.WriteLine($"Total cost of the past month order: {totalPriceOfORders.ToString()} kr");
             }
+            Console.WriteLine();
+            Console.ReadKey();
+            Console.Clear();
         }
 
 
         //Hitta de 3 mest sålda produkterna baserat på OrderDetail-data
-        //Take(3)
         public static void GetTopThreeMostSoldOrderDetailData()
         {
             using (var context = new E_CommerceContext())
             {
-                IQueryable<OrderDetail> orderDetails = context.OrderDetails
-                //.Where(o => o.ProductId > 2).OrderDescending().Take(3);
-                .OrderByDescending(o => o.ProductId > 2).Take(3);
+                //IQueryable<OrderDetail> orderDetails = context.OrderDetails
+                ////.Where(o => o.ProductId > 2).OrderDescending().Take(3);
+                //.OrderByDescending(o => o.ProductId).Take(3);
 
-                foreach (var o in orderDetails)
+                var orderDetailsTopThreee = context.OrderDetails
+                    .GroupBy(od => od.Product.Name)
+                    .Select(od => new
+                    {
+                        Name = od.Key,
+                        TotalQuantity = od.Sum(q => q.Quantity)
+
+                    }).OrderByDescending(tq => tq.TotalQuantity)
+                    .Take(3)
+                    .ToList();
+
+
+                foreach (var o in orderDetailsTopThreee)
                 {
-                    Console.WriteLine($"{o.ProductId} - {o.Quantity}");
+                    Console.WriteLine($"{o.Name} - Total Quantity: {o.TotalQuantity}");
                 }
+                Console.WriteLine();
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 
@@ -80,20 +105,24 @@ namespace Labb1___LINQ
             //I get atleast an output 
             using (var context = new E_CommerceContext())
             {
-                var getCategoryAndProduct = context.Categorys
-                    .Select(c => new
+                var getCategoryAndProduct = context.Products
+                    .GroupBy(p => p.Category)
+                    .Select(g => new
                     {
-                        Category = c.Name,
-                        Product = c.Products.Count()
+                        Category = g.Key,
+                        ProductAmount = g.Count()
                     })
                     .ToList();
 
-
+                Console.WriteLine("Categories:");
                 foreach (var items in getCategoryAndProduct)
                 {
-                    Console.WriteLine($"Categories: {items.Category} - Number of Products: {items.Product} ");
+                    Console.WriteLine($" {items.Category.Name} - Number of Products: {items.ProductAmount} ");
                 }
 
+                Console.WriteLine();
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 
@@ -103,7 +132,7 @@ namespace Labb1___LINQ
             using (var context = new E_CommerceContext())
             {
                 var getCustomerInfo = context.Orders
-                    .Where(o => o.TotalAmount > 100)
+                    .Where(o => o.TotalAmount > 1000)
                     .Include(c => c.Customer)
                     .Include(od => od.OrderDetails)
                     .ThenInclude(p => p.Product)
@@ -112,13 +141,17 @@ namespace Labb1___LINQ
 
                 foreach (var items in getCustomerInfo)
                 {
-                    Console.WriteLine($"Order: {items.OrderId}: Customer: {items.Customer.Name} - Total: {items.TotalAmount} kr");
+                    Console.WriteLine($"Order: {items.OrderId}: Customer: {items.Customer.Name} - Total: {items.TotalAmount:C}");
                     foreach (var d in items.OrderDetails)
                     {
                         Console.WriteLine($"Product name: {d.Product.Name}- Quantity: {d.Product.StockQuantity} - Unit price: {d.UnitPrice:C}");
                         Console.WriteLine();
                     }
                 }
+
+                Console.WriteLine();
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 

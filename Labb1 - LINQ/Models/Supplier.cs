@@ -17,6 +17,6 @@ namespace Labb1___LINQ.Models
         public int Phone { get; set; }
 
         //Navigation Property
-        public ICollection<Category> Categorys = new List<Category>();
+        public ICollection<Product>? Products { get; set; }
     }
 }

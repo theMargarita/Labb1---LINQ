@@ -14,7 +14,7 @@ namespace Labb1___LINQ.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Categorys",
+                name: "Categories",
                 columns: table => new
                 {
                     CategoryId = table.Column<int>(type: "int", nullable: false)
@@ -100,7 +100,7 @@ namespace Labb1___LINQ.Migrations
                     table.ForeignKey(
                         name: "FK_Products_Categorys_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Categorys",
+                        principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -140,7 +140,7 @@ namespace Labb1___LINQ.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Categorys",
+                table: "Categories",
                 columns: new[] { "CategoryId", "Description", "Name" },
                 values: new object[,]
                 {
@@ -280,7 +280,7 @@ namespace Labb1___LINQ.Migrations
                 name: "Customers");
 
             migrationBuilder.DropTable(
-                name: "Categorys");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Suppliers");
