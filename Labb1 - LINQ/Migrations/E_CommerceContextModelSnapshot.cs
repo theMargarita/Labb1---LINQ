@@ -38,9 +38,14 @@ namespace Labb1___LINQ.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("SupplierId")
+                        .HasColumnType("int");
+
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categorys");
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -679,10 +684,17 @@ namespace Labb1___LINQ.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Labb1___LINQ.Models.Category", b =>
+                {
+                    b.HasOne("Labb1___LINQ.Models.Supplier", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("SupplierId");
+                });
+
             modelBuilder.Entity("Labb1___LINQ.Models.Order", b =>
                 {
                     b.HasOne("Labb1___LINQ.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -712,7 +724,7 @@ namespace Labb1___LINQ.Migrations
             modelBuilder.Entity("Labb1___LINQ.Models.Product", b =>
                 {
                     b.HasOne("Labb1___LINQ.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -728,9 +740,24 @@ namespace Labb1___LINQ.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("Labb1___LINQ.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Labb1___LINQ.Models.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Labb1___LINQ.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Labb1___LINQ.Models.Supplier", b =>
+                {
+                    b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618
         }

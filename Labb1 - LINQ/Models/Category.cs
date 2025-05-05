@@ -12,6 +12,6 @@ namespace Labb1___LINQ.Models
         public string? Description { get; set; }
 
 
-        public ICollection<Product> Products = new List<Product>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

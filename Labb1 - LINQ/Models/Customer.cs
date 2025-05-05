@@ -16,7 +16,7 @@ namespace Labb1___LINQ.Models
         public int Phone { get; set; }
 
         //Navigation Property
-        public ICollection<Order> Orders = new List<Order>();
+        public ICollection<Order> Orders { get; set; } = [];
 
     }
 }

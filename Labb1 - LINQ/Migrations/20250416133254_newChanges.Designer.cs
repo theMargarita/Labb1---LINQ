@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Labb1___LINQ.Migrations
 {
     [DbContext(typeof(E_CommerceContext))]
-    [Migration("20250411110348_init-migration")]
-    partial class initmigration
+    [Migration("20250416133254_newChanges")]
+    partial class newChanges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,12 @@ namespace Labb1___LINQ.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("SupplierId")
+                        .HasColumnType("int");
+
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("Categories");
 
@@ -682,10 +687,17 @@ namespace Labb1___LINQ.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Labb1___LINQ.Models.Category", b =>
+                {
+                    b.HasOne("Labb1___LINQ.Models.Supplier", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("SupplierId");
+                });
+
             modelBuilder.Entity("Labb1___LINQ.Models.Order", b =>
                 {
                     b.HasOne("Labb1___LINQ.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -715,7 +727,7 @@ namespace Labb1___LINQ.Migrations
             modelBuilder.Entity("Labb1___LINQ.Models.Product", b =>
                 {
                     b.HasOne("Labb1___LINQ.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -731,9 +743,24 @@ namespace Labb1___LINQ.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("Labb1___LINQ.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Labb1___LINQ.Models.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Labb1___LINQ.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Labb1___LINQ.Models.Supplier", b =>
+                {
+                    b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618
         }

@@ -24,6 +24,6 @@ namespace Labb1___LINQ.Models
         public Category Category { get; set; } = null!;
         public Supplier Supplier { get; set; } = null!;
 
-        public ICollection<OrderDetail> OrderDetails = new List<OrderDetail>();
+        //public ICollection<OrderDetail> OrderDetails {get; set;}= new List<OrderDetail>();
     }
 }
